@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">DIY-DJ</string>
-    <string name="title_activity_spotify_login">Sign in</string>
+    <string name="title_activity_spotify_login">Sign in to your spotify aca</string>
 
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
@@ -15,4 +15,5 @@
         completions."
     </string>
     <string name="creatbutton">Create</string>
+    <string name="joinbutton">join</string>
 </resources>
