@@ -2,6 +2,12 @@
     <string name="app_name">DIY-DJ</string>
     <string name="title_activity_spotify_login">Sign in to your spotify account</string>
 
+    
+    
+    <!-- spotify strings -->
+    <string name="CLIENT_ID">89f69947e5df4167818e334f46abef71</string>
+    <string name="REDIRECT_URI">com.diy.dj://callback</string>
+
     <!-- Strings related to login -->
     <string name="prompt_email">Email</string>
     <string name="prompt_password">Password (optional)</string>
@@ -181,4 +187,13 @@
 
     <string name="pref_title_vibrate">Vibrate</string>
     <string name="chilluntilButton">Chill Until</string>
+    <string name="chillbutton">Just Chill</string>
+    <string name="partybutton">Party On!</string>
+    <string name="party">party</string>
+    <string name="join">Join</string>
+    <string name="error">error</string>
+    <string name="welcometext">Welcome to DIY-DJ</string>
+
+    <integer name="justchill">0</integer>
+    <integer name="partyon">1</integer>
 </resources>

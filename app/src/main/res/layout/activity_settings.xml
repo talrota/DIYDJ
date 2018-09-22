@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".settings">
+    tools:context=".Settings">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -28,19 +28,30 @@
                 android:id="@+id/chillUntilButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="@string/chilluntilButton" />
+                android:text="@string/chilluntilButton"
+                android:onClick="pushChilluntil"/>
+
+            <TimePicker
+                android:id="@+id/picktime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone" />
 
             <Button
                 android:id="@+id/chillButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="chillbutton" />
+                android:text="@string/chillbutton"
+                android:onClick="pushChill"/>
 
             <Button
                 android:id="@+id/partyButton"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="partyButton" />
+                android:text="@string/partybutton"
+                android:onClick="pushParty"/>
+
         </LinearLayout>
     </LinearLayout>
+
 </android.support.constraint.ConstraintLayout>
