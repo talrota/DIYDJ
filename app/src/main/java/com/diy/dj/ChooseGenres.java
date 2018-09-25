@@ -13,10 +13,10 @@ public class ChooseGenres extends AppCompatActivity {
 
 
 
-    private AuthenticationResponse response;
+    private static AuthenticationResponse recResponse;
 
     public static void start(Context context, AuthenticationResponse response){
-        AuthenticationResponse recResponse = response;
+        recResponse = response;
         Intent intent = new Intent(context, ChooseGenres.class);
         context.startActivity(intent);
     }

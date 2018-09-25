@@ -28,7 +28,7 @@
 
                 <data
                     android:host="callback"
-                    android:scheme="com.diy.dj"/>
+                    android:scheme="com.diy.dj" />
             </intent-filter>
         </activity>
         <activity
@@ -42,6 +42,10 @@
             android:theme="@android:style/Theme.Translucent.NoTitleBar" />
         <activity android:name=".JoinActivity" />
         <activity android:name=".ErrorActivity" />
+        <activity android:name=".LoginActivity" />
+        <activity
+            android:name=".PreLoginActivity"
+            android:label="@string/title_activity_pre_login" />
     </application>
 
 </manifest>
