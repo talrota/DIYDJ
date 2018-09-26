@@ -72,6 +72,7 @@ public class PreLoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
+                            finish();
                             Toast.makeText(PreLoginActivity.this, "Welcome to DIY-DJ", Toast.LENGTH_SHORT).show();
                             LoginActivity.start(context);
                         } else {
@@ -95,6 +96,7 @@ public class PreLoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             Toast.makeText(PreLoginActivity.this, "Welcome to DIY-DJ", Toast.LENGTH_SHORT).show();
+                            finish();
                             LoginActivity.start(context);
                         } else {
                             showProgress(false);
@@ -111,6 +113,7 @@ public class PreLoginActivity extends AppCompatActivity {
         FirebaseUser currentUser = mAuth.getCurrentUser();
         context = this;
         if (currentUser != null) {
+            finish();
             LoginActivity.start(this);
         }
         showProgress(false);

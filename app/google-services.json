@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "744175304471",
+    "firebase_url": "https://diy-dj-be.firebaseio.com",
+    "project_id": "diy-dj-be",
+    "storage_bucket": "diy-dj-be.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:744175304471:android:5510f5a888d6ab0c",
+        "android_client_info": {
+          "package_name": "com.diy.dj"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "744175304471-qk8sc28bl8v5b82h91riijd05sk4rjpf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.diy.dj",
+            "certificate_hash": "4a9ff775152e86011a9a5bb96d68e24048a1724a"
+          }
+        },
+        {
+          "client_id": "744175304471-p6f6d6qrs850nb9u10cl0gn5na1ojcji.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCF4sD2Nk2_Msn455MmIQlQzGobUgknTc"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "744175304471-p6f6d6qrs850nb9u10cl0gn5na1ojcji.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

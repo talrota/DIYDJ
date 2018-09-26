@@ -35,7 +35,8 @@
             android:name=".ChooseGenres"
             android:label="@string/title_activity_scrolling"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".PartyActivity" />
+        <activity android:name=".PartyActivity"
+                    android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".Settings" />
         <activity
             android:name="com.spotify.sdk.android.authentication.LoginActivity"
