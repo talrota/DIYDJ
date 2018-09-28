@@ -15,10 +15,7 @@ import static com.spotify.sdk.android.authentication.AuthenticationRequest.Build
 
 public class LoginActivity extends AppCompatActivity {
 
-    private static final String CLIENT_ID = "89f69947e5df4167818e334f46abef71";
-    private static final int REQUEST_CODE = 1337;
-    private static final String REDIRECT_URI = "com.diy.dj://callback";
-
+    private SpotifyContacts spotifyContacts;
 
     public static void start(Context context) {
         Intent intent = new Intent(context, LoginActivity.class);
@@ -30,15 +27,20 @@ public class LoginActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        spotifyContacts = new SpotifyContacts();
         spotifyLogin(this);
     }
 
     public void spotifyLogin(Context context){
+        String clientID = spotifyContacts.getCLIENT_ID();
+        String redirect_uri = spotifyContacts.getREDIRECT_URI();
+        int request_code = spotifyContacts.getREQUEST_CODE();
+
         Builder builder =
-                new Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
-        builder.setScopes(new String[]{"streaming"});
+                new Builder(clientID, AuthenticationResponse.Type.TOKEN, redirect_uri);
+        builder.setScopes(new String[]{"streaming","playlist-modify-private", "playlist-modify-public"});
         AuthenticationRequest request = builder.build();
-        openLoginActivity(this, REQUEST_CODE, request);
+        openLoginActivity(this, request_code, request);
     }
 
     @Override
@@ -46,12 +48,14 @@ public class LoginActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, intent);
 
         // Check if result comes from the correct activity
-        if (requestCode == REQUEST_CODE) {
+        if (requestCode == spotifyContacts.getREQUEST_CODE()) {
             AuthenticationResponse response = getResponse(resultCode, intent);
 
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
+//                    Log.e("response state : ", response.getState());
+     //               Log.e("response code : ", response.getCode());
                     ChooseGenres.start(this, response);
                     // Handle successful response
                     return;
@@ -65,7 +69,7 @@ public class LoginActivity extends AppCompatActivity {
 
                 // Most likely auth flow was cancelled
                 default:
-                    PartyActivity.start(this,-2, -2);
+                    PartyActivity.start(this,-2, -2, spotifyContacts);
                     // Handle other cases
             }
         }

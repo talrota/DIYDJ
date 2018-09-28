@@ -8,10 +8,12 @@ import android.view.View;
 import android.widget.TimePicker;
 
 public class Settings extends AppCompatActivity {
+    private static SpotifyContacts spotifyContacts;
 
-    public static void start(Context context){
+    public static void start(Context context, SpotifyContacts contcats){
         Intent intent = new Intent(context, Settings.class);
         context.startActivity(intent);
+        spotifyContacts = contcats;
     }
 
     public void pushChilluntil(View view){
@@ -21,7 +23,7 @@ public class Settings extends AppCompatActivity {
 
             @Override
             public void onTimeChanged (TimePicker v, int hour, int minute){
-                PartyActivity.start(Settings.this, hour, minute);
+                PartyActivity.start(Settings.this, hour, minute, spotifyContacts);
                 //todo
             }
 
@@ -29,11 +31,11 @@ public class Settings extends AppCompatActivity {
     }
 
     public void pushChill(View view){
-        PartyActivity.start(this, 1 , 1);
+        PartyActivity.start(this, 1 , 1, spotifyContacts);
     }
 
     public void pushParty(View view){
-        PartyActivity.start(this, -1 , -1);
+        PartyActivity.start(this, -1 , -1, spotifyContacts);
     }
 
     @Override

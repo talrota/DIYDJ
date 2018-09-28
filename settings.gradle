@@ -1,1 +1,1 @@
-include ':app', ':spotify-app-remote-release-0.4.0', ':spotify-app-remote', ':spotify-auth', ':spotify-android-auth'
+include ':app', ':spotify-app-remote', ':spotify-auth', ':spotify-android-auth', ':spotify-web-api-android'

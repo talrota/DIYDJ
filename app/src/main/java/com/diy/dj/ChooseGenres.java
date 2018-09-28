@@ -14,15 +14,18 @@ public class ChooseGenres extends AppCompatActivity {
 
 
     private static AuthenticationResponse recResponse;
+    private SpotifyContacts spotifyContacts;
+
 
     public static void start(Context context, AuthenticationResponse response){
         recResponse = response;
         Intent intent = new Intent(context, ChooseGenres.class);
         context.startActivity(intent);
+
     }
 
     public  void openSettings(View view){
-        Settings.start(this);
+        Settings.start(this, spotifyContacts);
     }
 
     @Override
@@ -31,7 +34,8 @@ public class ChooseGenres extends AppCompatActivity {
         setContentView(R.layout.activity_choosegenres);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-
+        spotifyContacts = new SpotifyContacts();
+        spotifyContacts.setTOKEN(recResponse.getAccessToken());
+        spotifyContacts.connectToDevice(this);
     }
 }

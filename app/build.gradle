@@ -32,9 +32,13 @@ dependencies {
     implementation 'com.google.firebase:firebase-auth:16.0.3'
     implementation 'com.google.firebase:firebase-database:16.0.2'
     implementation 'com.google.code.gson:gson:2.8.2'
+    implementation 'com.squareup.retrofit:retrofit:1.9.0'
+    implementation 'com.squareup.retrofit2:retrofit:2.4.0'
+    implementation 'com.squareup.okhttp:okhttp:2.7.4'
+    implementation 'com.squareup.okhttp:okhttp-urlconnection:2.7.4'
     api project(':spotify-android-auth')
     api project(':spotify-app-remote')
-
+    api project(':spotify-web-api-android')
 }
 
 apply plugin: 'com.google.gms.google-services'

@@ -10,7 +10,7 @@
     <!-- Strings related to login -->
     <string name="prompt_email">Enter your Email</string>
     <string name="prompt_password">Password (optional)</string>
-    <string name="action_sign_in">Sign in or register</string>
+    <string name="action_sign_in">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="error_invalid_email">This email address is invalid</string>
     <string name="error_invalid_password">This password is too short</string>
@@ -196,8 +196,11 @@
 
     <integer name="justchill">0</integer>
     <integer name="partyon">1</integer>
-    <string name="title_activity_pre_login">Sign in</string>
-    <string name="title_activity_fake_login2">Sign in</string>
-    <string name="action_sign_up">sign up</string>
+    <string name="title_activity_pre_login">Sign in  or Register to DIY-DJ</string>
+    <string name="action_sign_up">New User?! Register now!</string>
     <string name="logoutMenuButton">Logout</string>
+    <string name="userNameHint">select a user name</string>
+    <string name="next">Next</string>
+    <string name="like">Like</string>
+    <string name="diss">Diss</string>
 </resources>

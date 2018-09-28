@@ -11,8 +11,8 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/spotify-android-auth" />
             <option value="$PROJECT_DIR$/spotify-app-remote" />
-            <option value="$PROJECT_DIR$/spotify-app-remote-release-0.4.0" />
             <option value="$PROJECT_DIR$/spotify-auth" />
+            <option value="$PROJECT_DIR$/spotify-web-api-android" />
           </set>
         </option>
         <option name="resolveModulePerSourceSet" value="false" />

@@ -17,7 +17,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseUser;
-
+import com.google.firebase.auth.UserProfileChangeRequest;
 
 
 /**
@@ -44,12 +44,14 @@ public class PreLoginActivity extends AppCompatActivity {
      */
     private String mEmail;
     private String mPassword;
+    private Boolean push;
 
     // UI references.
     private EditText mEmailView;
     private EditText mPasswordView;
     private View mProgressView;
     private View mLoginFormView;
+    private EditText userView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,20 +63,40 @@ public class PreLoginActivity extends AppCompatActivity {
         mProgressView = (View) findViewById(R.id.login_progress);
         mEmailView = (EditText) findViewById(R.id.email);
         mPasswordView = (EditText) findViewById(R.id.getpassword);
+        userView = (EditText) findViewById(R.id.username);
+        userView.setVisibility(View.GONE);
+        push = false;
     }
 
+
+
     public void signUp(View view) {
-        context = this;
-        updateValidData();
-        showProgress(true);
-        mAuth.createUserWithEmailAndPassword(mEmail, mPassword)
+        if(!push){
+            push = true;
+            userView.setText(mEmail.split("@")[0]);
+            userView.setVisibility(View.VISIBLE);
+            return;
+        }else{
+            context = this;
+            updateValidData();
+            showProgress(true);
+            final String username = String.valueOf(userView.getText());
+            mAuth.createUserWithEmailAndPassword(mEmail, mPassword)
                 .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             finish();
-                            Toast.makeText(PreLoginActivity.this, "Welcome to DIY-DJ", Toast.LENGTH_SHORT).show();
-                            LoginActivity.start(context);
+                            FirebaseUser user = mAuth.getCurrentUser();
+                            if (user != null){
+                                UserProfileChangeRequest profile = new UserProfileChangeRequest.Builder()
+                                        .setDisplayName(username).build();
+                                while(user.getDisplayName() != null){
+                                    user.updateProfile(profile);
+                                }
+                                Toast.makeText(PreLoginActivity.this, "Welcome "+ username+ " to DIY-DJ", Toast.LENGTH_SHORT).show();
+                                LoginActivity.start(context);
+                            }
                         } else {
                             showProgress(false);
                             if(task.getException() instanceof FirebaseAuthUserCollisionException){
@@ -85,6 +107,7 @@ public class PreLoginActivity extends AppCompatActivity {
                         }
                     }
                 });
+        }
     }
 
     public void signIn(View view) {
@@ -95,7 +118,8 @@ public class PreLoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
-                            Toast.makeText(PreLoginActivity.this, "Welcome to DIY-DJ", Toast.LENGTH_SHORT).show();
+                            String username = mAuth.getCurrentUser().getDisplayName();
+                            Toast.makeText(PreLoginActivity.this, "Welcome "+ username+ " to DIY-DJ", Toast.LENGTH_SHORT).show();
                             finish();
                             LoginActivity.start(context);
                         } else {
@@ -112,6 +136,7 @@ public class PreLoginActivity extends AppCompatActivity {
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
         context = this;
+        push = false;
         if (currentUser != null) {
             finish();
             LoginActivity.start(this);
@@ -162,7 +187,7 @@ public class PreLoginActivity extends AppCompatActivity {
 
     private boolean isPasswordValid(String password) {
         //TODO: Replace this with your own logic
-        return password.length() > 6;
+        return password.length() > 5;
     }
 
     /**

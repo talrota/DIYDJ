@@ -8,17 +8,24 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+
 
 import com.google.firebase.auth.FirebaseAuth;
-
 public class PartyActivity extends AppCompatActivity {
+
 
     private static int hour;
     private static int minute;
+    private boolean push;
+    private static SpotifyContacts spotifyContacts;
 
-    public static void start(Context context, int hour, int minute){
+    public static void start(Context context, int hour, int minute, SpotifyContacts contacts){
         Intent intent = new Intent(context, PartyActivity.class);
         PartyActivity.hour = hour;
+        spotifyContacts = contacts;
+        spotifyContacts.setHour(hour);
+        spotifyContacts.setMinute(minute);
         PartyActivity.minute = minute;
         context.startActivity(intent);
     }
@@ -38,11 +45,25 @@ public class PartyActivity extends AppCompatActivity {
         return true;
     }
 
+    public void startPlaylist(View view){
+        spotifyContacts.startPlaylist();
+    }
+
+    public void nextSong(View view){
+        spotifyContacts.nextSong();
+    }
+
+    protected void onStop() {
+        super.onStop();
+        spotifyContacts.disconnetFromDevice();
+    }
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.logoutViaMenu:
                 FirebaseAuth.getInstance().signOut();
+                spotifyContacts.disconnetFromDevice();
                 finish();
                 PreLoginActivity.start(this);
                 break;
