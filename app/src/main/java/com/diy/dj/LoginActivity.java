@@ -54,8 +54,9 @@ public class LoginActivity extends AppCompatActivity {
             switch (response.getType()) {
                 // Response was successful and contains auth token
                 case TOKEN:
-//                    Log.e("response state : ", response.getState());
-     //               Log.e("response code : ", response.getCode());
+                    spotifyContacts = new SpotifyContacts();
+                    spotifyContacts.setTOKEN(response.getAccessToken());
+                    spotifyContacts.connectToDevice(this);
                     ChooseGenres.start(this, response);
                     // Handle successful response
                     return;

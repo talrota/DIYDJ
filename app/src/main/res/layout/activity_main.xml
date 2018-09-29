@@ -22,14 +22,15 @@
             android:orientation="vertical"
             android:layout_weight="3">
 
-            <Button
+            <ImageButton
                 android:id="@+id/createButton"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:onClick="openLogin"
                 android:padding="5dp"
-                android:text="@string/creatbutton" />
+                android:scaleType="fitXY"
+                android:src="@drawable/glowgreenletsparty" />
 
             <Button
                 android:id="@+id/join_button"

@@ -46,7 +46,7 @@ public class PartyActivity extends AppCompatActivity {
     }
 
     public void startPlaylist(View view){
-        spotifyContacts.startPlaylist();
+        spotifyContacts.getGenres();
     }
 
     public void nextSong(View view){

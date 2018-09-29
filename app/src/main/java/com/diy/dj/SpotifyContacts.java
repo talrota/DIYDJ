@@ -1,6 +1,7 @@
 package com.diy.dj;
 
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Parcel;
@@ -24,6 +25,7 @@ import kaaes.spotify.webapi.android.SpotifyService;
 import kaaes.spotify.webapi.android.models.Playlist;
 import kaaes.spotify.webapi.android.models.UserPrivate;
 import kaaes.spotify.webapi.android.models.PlaylistBase;
+import kaaes.spotify.webapi.android.models.CategoriesPager;
 
 
 
@@ -31,7 +33,7 @@ public class SpotifyContacts {
     private final String CLIENT_ID;
     private  final int REQUEST_CODE;
     private final String REDIRECT_URI;
-    private static String TOKEN;
+    private static String spotifyTOKEN;
     private SpotifyAppRemote mSpotifyAppRemote;
     private static String TAG = SpotifyContacts.class.getName();
     private int hour;
@@ -41,19 +43,24 @@ public class SpotifyContacts {
     private static UserPrivate user;
     private static String ID = "000000000000000000000";
     private static Playlist playlist;
+    private static String PartyTOKEN;
+    private static CategoriesPager genres;
+
 
     SpotifyContacts(){
         CLIENT_ID = "89f69947e5df4167818e334f46abef71";
         REQUEST_CODE = 1337;
         REDIRECT_URI = "com.diy.dj://callback";
+        user = null;
     }
 
+    // ------- getters and setters ------------
     public String getTOKEN() {
-        return TOKEN;
+        return spotifyTOKEN;
     }
 
     public void setTOKEN(String token) {
-        TOKEN = token;
+        spotifyTOKEN = token;
     }
 
     public int getHour() {
@@ -71,6 +78,20 @@ public class SpotifyContacts {
     public void setMinute(int minute) {
         this.minute = minute;
     }
+
+    public String getCLIENT_ID() {
+        return CLIENT_ID;
+    }
+
+    public int getREQUEST_CODE() {
+        return REQUEST_CODE;
+    }
+
+    public String getREDIRECT_URI() {
+        return REDIRECT_URI;
+    }
+
+    // ------- appRemote functions ------------
 
     public void nextSong(){
         mSpotifyAppRemote.getPlayerApi().skipNext();
@@ -102,15 +123,22 @@ public class SpotifyContacts {
         spotifyApi = newApi();
     }
 
-    public void startPlaylist(){
-        try{
-            playlist = newPlaylist();
-            mSpotifyAppRemote.getPlayerApi().play(playlist.uri);
-        }
-        catch (Exception e){
-            Log.e( TAG, ID);
-        }
+    public void addSongs(String uri){
+         mSpotifyAppRemote.getPlayerApi().queue(uri);
     }
+    public void dodo(){
+        mSpotifyAppRemote.getPlayerApi()
+                .subscribeToPlayerState().setEventCallback(new Subscription.EventCallback<PlayerState>() {
+            public void onEvent(PlayerState playerState) {
+                final Track track = playerState.track;
+                if (track != null) {
+                    Log.d("MainActivity", track.name + " by " + track.artist.name);
+                }
+            }
+        });
+    }
+
+    // ------ spotify web API functions
 
     private static SpotifyApi newApi(){
         new AsyncTask<Void, Void, SpotifyApi>() {
@@ -129,7 +157,7 @@ public class SpotifyContacts {
             @Override
             protected void onPostExecute(SpotifyApi api) {
                 spotifyApi = api;
-                spotifyApi.setAccessToken(TOKEN);
+                spotifyApi.setAccessToken(spotifyTOKEN);
                 spotifyService = newService();
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -153,6 +181,7 @@ public class SpotifyContacts {
             @Override
             protected void onPostExecute(SpotifyService newService) {
                 spotifyService = newService;
+                genres = getGenres();
                 user = getUser();
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -209,35 +238,32 @@ public class SpotifyContacts {
         return null;
     }
 
+    public static CategoriesPager getGenres(){
+        new AsyncTask<Void, Void, CategoriesPager>() {
+            @Override
+            protected CategoriesPager doInBackground(Void... voids) {
+                CategoriesPager categoriesPager = null;
+                try {
+                    Map<String,Object> body = new HashMap<>();
+                    body.put("limit", "50");
+                    categoriesPager = spotifyService.getCategories(body);
+
+                } catch (Exception e) {
+                    Log.e(TAG, "Error genres : " + e.getCause());
+                }
+                return categoriesPager;
+            }
+            @Override
+            protected void onPostExecute(CategoriesPager result) {
+                genres = result;
+                Log.e("genres got : ", result.categories.items.toString());
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        return null;
+    }
+
     public void disconnetFromDevice(){
         SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
         }
 
-    public String getCLIENT_ID() {
-        return CLIENT_ID;
-    }
-
-    public int getREQUEST_CODE() {
-        return REQUEST_CODE;
-    }
-
-    public String getREDIRECT_URI() {
-        return REDIRECT_URI;
-    }
-
-    public void addingSongs(){
-       // mSpotifyAppRemote.getPlayerApi().queue()
-    }
-
-    public void dodo(){
-        mSpotifyAppRemote.getPlayerApi()
-                .subscribeToPlayerState().setEventCallback(new Subscription.EventCallback<PlayerState>() {
-                    public void onEvent(PlayerState playerState) {
-                        final Track track = playerState.track;
-                        if (track != null) {
-                        Log.d("MainActivity", track.name + " by " + track.artist.name);
-                }
-            }
-        });
-    }
 }
