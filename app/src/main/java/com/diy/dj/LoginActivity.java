@@ -14,8 +14,8 @@ import static com.spotify.sdk.android.authentication.AuthenticationClient.openLo
 import static com.spotify.sdk.android.authentication.AuthenticationRequest.Builder;
 
 public class LoginActivity extends AppCompatActivity {
-
-    private SpotifyContacts spotifyContacts;
+    public static Context context;
+    public static SpotifyContacts spotifyContacts;
 
     public static void start(Context context) {
         Intent intent = new Intent(context, LoginActivity.class);
@@ -35,7 +35,6 @@ public class LoginActivity extends AppCompatActivity {
         String clientID = spotifyContacts.getCLIENT_ID();
         String redirect_uri = spotifyContacts.getREDIRECT_URI();
         int request_code = spotifyContacts.getREQUEST_CODE();
-
         Builder builder =
                 new Builder(clientID, AuthenticationResponse.Type.TOKEN, redirect_uri);
         builder.setScopes(new String[]{"streaming","playlist-modify-private", "playlist-modify-public"});
@@ -56,8 +55,8 @@ public class LoginActivity extends AppCompatActivity {
                 case TOKEN:
                     spotifyContacts = new SpotifyContacts();
                     spotifyContacts.setTOKEN(response.getAccessToken());
+                    context = this;
                     spotifyContacts.connectToDevice(this);
-                    ChooseGenres.start(this, response);
                     // Handle successful response
                     return;
 

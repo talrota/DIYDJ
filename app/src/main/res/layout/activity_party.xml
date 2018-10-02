@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/linearLayout2"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -11,22 +11,67 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/menuToolbar"
-        android:background="@color/colorPrimary"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-
-    <view
-        class="android.support.v4.widget.SlidingPaneLayout"
-        id="@+id/view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="8" />
+        android:layout_weight="1"
+        android:background="@color/spotifyBlack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_default="wrap"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_constraintWidth_default="spread" />
 
     <LinearLayout
+        android:id="@+id/recomendedSongListLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="0dp"
+        android:orientation="vertical"
+        app:layout_constrainedHeight="false"
+        app:layout_constraintBottom_toTopOf="@id/partyButtons"
+        app:layout_constraintHeight_min="wrap"
+        app:layout_constraintTop_toBottomOf="@id/menuToolbar">
+
+        <ListView
+            android:id="@+id/recomendedSongList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="5"
+            tools:layout_editor_absoluteX="0dp" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/partyButtons"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constrainedHeight="true"
+        android:layout_weight="1"
         android:orientation="horizontal"
-        android:layout_weight="1">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintHeight_min="wrap">
+
+        <Button
+            android:id="@+id/GetRecommendation"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="getRecommendation"
+            android:text="Rec" />
+
+        <Button
+            android:id="@+id/likeButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="refreshView"
+            android:text="@string/like" />
+
+        <Button
+            android:id="@+id/nextButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:onClick="nextSong"
+            android:text="@string/next" />
 
         <Button
             android:id="@+id/dissButton"
@@ -34,22 +79,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="@string/diss" />
-
-        <Button
-            android:id="@+id/likeButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/like"
-            android:onClick="startPlaylist"/>
-
-        <Button
-            android:id="@+id/nextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/next"
-            android:onClick="nextSong"/>
     </LinearLayout>
 
-</LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

@@ -1,40 +1,49 @@
 package com.diy.dj;
 
 
-import android.annotation.SuppressLint;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.icu.text.SimpleDateFormat;
 import android.os.AsyncTask;
-import android.os.Parcel;
 import android.util.Log;
 
-import com.google.firebase.auth.UserInfo;
 import com.spotify.android.appremote.api.ConnectionParams;
 import com.spotify.android.appremote.api.Connector;
 import com.spotify.android.appremote.api.SpotifyAppRemote;
-import com.spotify.protocol.client.Subscription;
-import com.spotify.protocol.types.PlayerState;
-import com.spotify.protocol.types.Track;
-import com.squareup.okhttp.Response;
+import com.spotify.protocol.client.CallResult;
+import com.spotify.protocol.types.ImageUri;
+
+import kaaes.spotify.webapi.android.models.Pager;
+import kaaes.spotify.webapi.android.models.PlaylistTrack;
+import kaaes.spotify.webapi.android.models.Track;
+import com.spotify.protocol.types.Uri;
 
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import kaaes.spotify.webapi.android.SpotifyApi;
 import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.Category;
 import kaaes.spotify.webapi.android.models.Playlist;
+import kaaes.spotify.webapi.android.models.Recommendations;
 import kaaes.spotify.webapi.android.models.UserPrivate;
-import kaaes.spotify.webapi.android.models.PlaylistBase;
 import kaaes.spotify.webapi.android.models.CategoriesPager;
-
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
 
 
 public class SpotifyContacts {
-    private final String CLIENT_ID;
-    private  final int REQUEST_CODE;
-    private final String REDIRECT_URI;
+    private final String CLIENT_ID = "89f69947e5df4167818e334f46abef71";
+    private  final int  REQUEST_CODE = 1337;
+    private final String REDIRECT_URI = "com.diy.dj://callback";
     private static String spotifyTOKEN;
-    private SpotifyAppRemote mSpotifyAppRemote;
+    private static SpotifyAppRemote mSpotifyAppRemote;
     private static String TAG = SpotifyContacts.class.getName();
     private int hour;
     private int minute;
@@ -44,14 +53,34 @@ public class SpotifyContacts {
     private static String ID = "000000000000000000000";
     private static Playlist playlist;
     private static String PartyTOKEN;
-    private static CategoriesPager genres;
+    private static CategoriesPager spotifyGenres;
+    private static ArrayList<Category> categoryArrayList;
+    private static ArrayList<Category> selectedGenres;
+    public static boolean finishedConnection;
+    public static Recommendations recomendtionRecived;
+    public static List<Track> recomendedTrackes;
+    public List<Track> unWantedTrackes;
+    public List<Uri> wantedTrackes;
+    public static int limit;
+
 
 
     SpotifyContacts(){
-        CLIENT_ID = "89f69947e5df4167818e334f46abef71";
-        REQUEST_CODE = 1337;
-        REDIRECT_URI = "com.diy.dj://callback";
+        limit = 5;
+        finishedConnection = false;
         user = null;
+        spotifyTOKEN = null;
+        hour = -99;
+        minute = -99;
+        spotifyService = null;
+        spotifyApi = null;
+        spotifyGenres = null;
+        playlist = null;
+        categoryArrayList = new ArrayList<Category>();
+        selectedGenres = new ArrayList<Category>();
+        unWantedTrackes = new ArrayList<Track>();
+        wantedTrackes = new ArrayList<Uri>();
+        recomendedTrackes = new ArrayList<Track>();
     }
 
     // ------- getters and setters ------------
@@ -91,6 +120,24 @@ public class SpotifyContacts {
         return REDIRECT_URI;
     }
 
+    public static String getPartyTOKEN() {
+        return PartyTOKEN;
+    }
+
+    public static List<Category> getSpotifyGenres() {
+//        for(int i = 0; i < categoryArrayList.size() ; i++ ){
+//            Log.e("genre got : ", categoryArrayList.get(i).name);
+//            for(int j = 0; j <  categoryArrayList.get(i).icons.size() ; j++ ){
+//                Log.e("genre got : ", (categoryArrayList.get(i).icons.get(j).url));
+//            }
+//        }
+        return categoryArrayList;
+        }
+
+    public ArrayList<Category> getSelectedGenres() {
+        return selectedGenres;
+    }
+
     // ------- appRemote functions ------------
 
     public void nextSong(){
@@ -98,6 +145,7 @@ public class SpotifyContacts {
     }
 
     public void connectToDevice(final Context context){
+        spotifyApi = newApi();
         ConnectionParams connectionParams =
             new ConnectionParams.Builder(getCLIENT_ID())
                     .setRedirectUri(getREDIRECT_URI())
@@ -120,22 +168,45 @@ public class SpotifyContacts {
                         // Something went wrong when attempting to connect! Handle errors here
                     }
                 });
-        spotifyApi = newApi();
     }
 
     public void addSongs(String uri){
          mSpotifyAppRemote.getPlayerApi().queue(uri);
     }
-    public void dodo(){
-        mSpotifyAppRemote.getPlayerApi()
-                .subscribeToPlayerState().setEventCallback(new Subscription.EventCallback<PlayerState>() {
-            public void onEvent(PlayerState playerState) {
-                final Track track = playerState.track;
-                if (track != null) {
-                    Log.d("MainActivity", track.name + " by " + track.artist.name);
-                }
+
+    public void selectGenre(Category category){
+        selectedGenres.add(category);
+    }
+
+    public void removeGenre(Category category){selectedGenres.remove(category);}
+
+    public int numOfSelectedGenres(){
+        return selectedGenres.size();
+    }
+
+    public static String selectedGenresString(Boolean withAnd){
+        String s = new String();
+        int size = selectedGenres.size();
+        for(int i=0 ; i< selectedGenres.size(); i++){
+            if (i+1 == size){
+                s = s + selectedGenres.get(i).name + " ";
             }
-        });
+            if (i+2 == size){
+                    if(withAnd){
+                    s = s + selectedGenres.get(i).name + " and ";
+                    }else{
+                        s = s + selectedGenres.get(i).name + ", ";
+                    }
+            }
+            if(i+3 <= size ){
+                s = s + selectedGenres.get(i).name + ", ";
+            }
+        }
+        return s;
+    }
+
+    public void disconnetFromDevice(){
+        SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
     }
 
     // ------ spotify web API functions
@@ -181,14 +252,15 @@ public class SpotifyContacts {
             @Override
             protected void onPostExecute(SpotifyService newService) {
                 spotifyService = newService;
-                genres = getGenres();
+                getGenres();
                 user = getUser();
+
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         return null;
     }
 
-    private static UserPrivate getUser(){
+    public static UserPrivate getUser(){
         new AsyncTask<Void, Void, UserPrivate>() {
         @Override
         protected UserPrivate doInBackground(Void... voids) {
@@ -205,14 +277,20 @@ public class SpotifyContacts {
         protected void onPostExecute(UserPrivate userPrivate) {
             user = userPrivate;
             ID = userPrivate.id;
+            finishedConnection = true;
             Log.e( TAG, "ON POST got id: " + ID);
-            newPlaylist();
         }
     }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         return null;
     }
 
-    private static Playlist newPlaylist(){
+    public CallResult<Bitmap> getImage(String stringUri){
+        ImageUri uri = new ImageUri(stringUri);
+        return mSpotifyAppRemote.getImagesApi().getImage(uri);
+
+    }
+
+    public static Playlist newPlaylist(){
         new AsyncTask<Void, Void, Playlist>() {
             @Override
             protected Playlist doInBackground(Void... voids) {
@@ -220,9 +298,14 @@ public class SpotifyContacts {
                 try {
                     Log.e( TAG, "ON POST got id: " + ID);
                     Map<String,Object> body = new HashMap<>();
-                    body.put("name","DIY-DJ-GENERATED-FIRST-PLAYLIST!!!");
-                    body.put("public", false);
-                    body.put("description", "my fucking god!");
+                    String date = new SimpleDateFormat("dd/MM/YY", Locale.getDefault()).format(new Date());
+                    String gen = selectedGenresString(true);
+                    body.put("name","DIYDJ " +gen+ "Party Playlist " + date);
+                    body.put("public", true);
+                    body.put("description", "This is a " + gen +
+                            "generated party playlist by DIYDJ!"+
+                            " makeing sure you and your friends will Party all night long with the right music!");
+                    Log.e("body playlist", body.toString());
                     newPlaylist = spotifyService.createPlaylist(ID , body);
                 } catch (Exception e) {
                     Log.e(TAG, "Error Creating playilst: " + e.getCause());
@@ -233,37 +316,120 @@ public class SpotifyContacts {
             @Override
             protected void onPostExecute(Playlist newPlaylist) {
                 playlist = newPlaylist;
+                mSpotifyAppRemote.getPlayerApi().play(playlist.uri);
+                getRecommendations();
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         return null;
     }
 
-    public static CategoriesPager getGenres(){
-        new AsyncTask<Void, Void, CategoriesPager>() {
+    public static ArrayList<Category> getGenres(){
+        new AsyncTask<Void, Void, List<Category>>() {
             @Override
-            protected CategoriesPager doInBackground(Void... voids) {
-                CategoriesPager categoriesPager = null;
+            protected ArrayList<Category> doInBackground(Void... voids) {
+                ArrayList<Category> categories = new ArrayList<Category>();
                 try {
                     Map<String,Object> body = new HashMap<>();
                     body.put("limit", "50");
-                    categoriesPager = spotifyService.getCategories(body);
-
+                    categories.addAll(spotifyService.getCategories(body).categories.items);
+                    ChooseGenres.start(LoginActivity.context, LoginActivity.spotifyContacts);
                 } catch (Exception e) {
                     Log.e(TAG, "Error genres : " + e.getCause());
                 }
-                return categoriesPager;
+                return categories;
             }
             @Override
-            protected void onPostExecute(CategoriesPager result) {
-                genres = result;
-                Log.e("genres got : ", result.categories.items.toString());
+            protected void onPostExecute(List<Category> result) {
+                categoryArrayList.addAll(result);
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
         return null;
     }
 
-    public void disconnetFromDevice(){
-        SpotifyAppRemote.CONNECTOR.disconnect(mSpotifyAppRemote);
-        }
+    public static void appendTrack(final List<Uri> uris){
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                Void v = null;
+                try {
+                    Map<String,Object> body = new HashMap<>();
+                    Map<String,Object> query = new HashMap<>();
+                    body.put("uris", uris.get(0).uri);
+//                    body.put("position", 0);
+                    Log.e("body:", body.toString());
+                    spotifyService.addTracksToPlaylist(ID, playlist.id, body, body, new Callback<Pager<PlaylistTrack>>() {
+                        @Override
+                        public void success(Pager<PlaylistTrack> playlistTrackPager, Response response) {
+                            Log.e("addTracksToPlaylist", playlistTrackPager.items.get(0).track.id);
+                        }
+                        @Override
+                        public void failure(RetrofitError error) {
+                            Log.e("addTracksToPlaylist - fail", error.getMessage());
+                        }
+                    });
+                } catch (Exception e) {
+                    Log.e(TAG, "Error addTracksToPlaylist : " + e.getMessage());
+                }
+                return v;
+            }
 
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+    }
+
+    public static Recommendations getRecomendedTracks(){
+        new AsyncTask<Void, Void, Recommendations>() {
+            @Override
+            protected Recommendations doInBackground(Void... voids) {
+                Recommendations recommendations = new Recommendations();
+                try {
+                    Map<String,Object> body = new HashMap<>();
+                    body.put("limit", 5);
+                    body.put("seed_artists", "4NHQUGzhtTLFvgF5SZesLK");
+                    body.put("seed_genres", selectedGenresString(false));
+                    body.put("seed_tracks", "0c6xIDDpzE81m2q797ordA");
+                    recommendations = spotifyService.getRecommendations(body);
+                } catch (Exception e) {
+                    Log.e(TAG, "Error recomendation : " + e.getMessage());
+                }
+                return recommendations;
+            }
+            @Override
+            protected void onPostExecute(Recommendations rec) {
+                recomendedTrackes = rec.tracks;
+                Log.e("got", rec.tracks.size() + "recomendations");
+                for(int i=0; i < rec.tracks.size(); i++){
+                    Log.e("track name:", rec.tracks.get(i).name);
+                }
+            }
+        }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
+        return null;
+    }
+
+    public static void getRecommendations(){
+        recomendtionRecived = getRecomendedTracks();
+//        Map<String,Object> body = new HashMap<>();
+//        ArrayList genres = new ArrayList<String>();
+//        for(int i=0; i < selectedGenres.size(); i++){
+//            genres.add(selectedGenres.get(i).name);
+//        }
+//        body.put("seed_artists", new ArrayList<String>());
+//        body.put("seed_genres", new ArrayList<String>());
+//        body.put("seed_tracks", new ArrayList<String>());
+//        body.put("danceability", "max_danceability");
+//        body.put("energy", "max_energy");
+//        body.put("popularity", "max_popularity");
+
+//            recomendedTracks = spotifyService.getRecommendations(body);
+//        , new Callback<Recommendations>() {
+//            @Override
+//            public void success(Recommendations recommendations, Response response) {
+//                recomendedTracks = recommendations.tracks;
+//            }
+//            @Override
+//            public void failure(RetrofitError error) {
+//                Log.e("recommendation Error", error.toString());
+//                getRecommendations();
+//            }
+//        });
+    }
 }
