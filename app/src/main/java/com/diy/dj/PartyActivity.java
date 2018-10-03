@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -18,6 +19,7 @@ import android.view.ViewParent;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -42,17 +44,18 @@ public class PartyActivity extends AppCompatActivity {
     private static int hour;
     private static int minute;
     private boolean push;
-    Context context;
-    int itemsClicked;
+    public static Context context;
+    public static int itemsClicked;
     private long timeToRefresh;
     private static SpotifyContacts spotifyContacts;
+    Handler mHandler;
 
     public static void start(Context context, int hour, int minute, SpotifyContacts contacts) {
         Intent intent = new Intent(context, PartyActivity.class);
         PartyActivity.hour = hour;
         spotifyContacts = contacts;
-//        spotifyContacts.setHour(hour);
-     //   spotifyContacts.setMinute(minute);
+        spotifyContacts.setHour(hour);
+        spotifyContacts.setMinute(minute);
         PartyActivity.minute = minute;
         context.startActivity(intent);
     }
@@ -64,19 +67,15 @@ public class PartyActivity extends AppCompatActivity {
         itemsClicked = 0;
         setContentView(R.layout.activity_party);
         context = this;
+
         Toolbar toolbar = findViewById(R.id.menuToolbar);
         setSupportActionBar(toolbar);
         if (!SpotifyContacts.recomendedTrackes.isEmpty()) {
-            Log.e("got", "here - party");
             recomendations = SpotifyContacts.recomendedTrackes;
             ListView listview = (ListView) findViewById(R.id.recomendedSongList);
             listview.setAdapter(new PartyActivity.mysongListadaptor(context, R.layout.song_item_layout, SpotifyContacts.recomendedTrackes));
         } else {
-            Log.e("fuck", "man");
             recomendations = new ArrayList<Track>();
-//            refreshView(findViewById(R.id.recomendedSongList));
-//            final ListView listview = (ListView) findViewById(R.id.recomendedSongList);
-//            listview.setAdapter(new PartyActivity.mysongListadaptor(context, R.layout.song_item_layout, recomendations));
         }
 
     }
@@ -89,15 +88,34 @@ public class PartyActivity extends AppCompatActivity {
     }
 
     public void refreshView(View view) {
-    }
+        spotifyContacts.getRecommendations();
+        this.mHandler = new Handler();
+        this.mHandler.postDelayed(refreshViewDelay,400);
+     }
 
+    private final Runnable refreshViewDelay = new Runnable() {
+        public void run() {
+            ListView listview = (ListView) findViewById(R.id.recomendedSongList);
+            if (SpotifyContacts.recomendedTrackes != null) {
+                listview.setAdapter(new PartyActivity.mysongListadaptor(context, R.layout.song_item_layout, SpotifyContacts.recomendedTrackes));
+            } else {
+                refreshView(listview);
+            }
+        }
+    };
 
     public void getRecommendation(View view){
         spotifyContacts.getRecommendations();
     }
 
+    public void pausePlay(View view){
+        spotifyContacts.pausePlay(context);
+        ImageButton b = findViewById(R.id.play_pause);
+        //b.setImageDrawable(R.drawable.);
+        }
+
     public void nextSong(View view) {
-        spotifyContacts.nextSong();
+        spotifyContacts.nextSong(context);
     }
 
     protected void onStop() {
@@ -144,30 +162,40 @@ public class PartyActivity extends AppCompatActivity {
                 convertView.setTag(trackHolder);
             }
             mainViewHolder = (PartyActivity.TrackHolder) convertView.getTag();
-            mainViewHolder.trackname.setText(getItem(position).name);
+            mainViewHolder.trackname.setText(spotifyContacts.recomendedTrackes.get(position).name);
             String artists = new String();
-            for(int j =0; j < getItem(position).artists.size(); j++){
-                artists += getItem(position).artists.get(j).name + ", ";
+            for(int j =0; j < spotifyContacts.recomendedTrackes.get(position).artists.size(); j++){
+                artists += spotifyContacts.recomendedTrackes.get(position).artists.get(j).name + ", ";
             }
             mainViewHolder.artist.setText(artists);
             mainViewHolder.inButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     List<Uri> list = new ArrayList<>();
-                    Uri uri = new Uri(recomendations.get(position).uri);
+                    Uri uri = new Uri(spotifyContacts.recomendedTrackes.get(position).uri);
+                    spotifyContacts.add_track_seed(spotifyContacts.recomendedTrackes.get(position).id);
+                    spotifyContacts.add_artist_seed(spotifyContacts.recomendedTrackes.get(position).artists.get(0).id);
                     list.add(uri);
+                    itemsClicked ++;
+                    if(itemsClicked >= spotifyContacts.limit){
+                        refreshView(v);
+                    }
                     spotifyContacts.appendTrack(list);
-                    timeToRefresh += recomendations.get(position).duration_ms;
+                    timeToRefresh += spotifyContacts.recomendedTrackes.get(position).duration_ms;
                     View vp =(View) v.getParent();
-                    Toast.makeText(context, "added"+ recomendations.get(position).name +"to the playlist", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "added"+ spotifyContacts.recomendedTrackes.get(position).name +"to the playlist", Toast.LENGTH_SHORT).show();
                     vp.setVisibility(View.GONE);
                     }
             });
             mainViewHolder.outButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    spotifyContacts.unWantedTrackes.add(recomendations.get(position));
-                    Toast.makeText(context, "removed "+ recomendations.get(position).name , Toast.LENGTH_SHORT).show();
+                    spotifyContacts.unWantedTrackes.add(spotifyContacts.recomendedTrackes.get(position));
+                    itemsClicked ++;
+                    if(itemsClicked >= spotifyContacts.limit){
+                        spotifyContacts.getRecommendations();
+                    }
+                    Toast.makeText(context, "removed "+ spotifyContacts.recomendedTrackes.get(position).name , Toast.LENGTH_SHORT).show();
                     View vp =(View) v.getParent();
                     vp.setVisibility(View.GONE);
                 }

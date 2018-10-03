@@ -22,6 +22,7 @@ import com.spotify.protocol.types.Uri;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -39,9 +40,9 @@ import retrofit.client.Response;
 
 
 public class SpotifyContacts {
-    private final String CLIENT_ID = "89f69947e5df4167818e334f46abef71";
+    private static final String CLIENT_ID = "89f69947e5df4167818e334f46abef71";
     private  final int  REQUEST_CODE = 1337;
-    private final String REDIRECT_URI = "com.diy.dj://callback";
+    private static final String REDIRECT_URI = "com.diy.dj://callback";
     private static String spotifyTOKEN;
     private static SpotifyAppRemote mSpotifyAppRemote;
     private static String TAG = SpotifyContacts.class.getName();
@@ -62,11 +63,19 @@ public class SpotifyContacts {
     public List<Track> unWantedTrackes;
     public List<Uri> wantedTrackes;
     public static int limit;
+    private static LinkedList<String> seed_artist;
+    private static LinkedList<String> seed_track;
+    public static boolean firstSong;
+    public static int playpause;
+    public static int randomInt;
 
 
 
     SpotifyContacts(){
-        limit = 5;
+        limit = 10;
+        playpause = 0;
+        randomInt=0;
+        firstSong = true;
         finishedConnection = false;
         user = null;
         spotifyTOKEN = null;
@@ -81,6 +90,10 @@ public class SpotifyContacts {
         unWantedTrackes = new ArrayList<Track>();
         wantedTrackes = new ArrayList<Uri>();
         recomendedTrackes = new ArrayList<Track>();
+        seed_artist = new LinkedList<>();
+        seed_artist.add("2RdwBSPQiwcmiDo9kixcl8");
+        seed_track = new LinkedList<>();
+        seed_track.add("2ZBNclC5wm4GtiWaeh0DMx");
     }
 
     // ------- getters and setters ------------
@@ -108,7 +121,7 @@ public class SpotifyContacts {
         this.minute = minute;
     }
 
-    public String getCLIENT_ID() {
+    public static String getCLIENT_ID() {
         return CLIENT_ID;
     }
 
@@ -116,7 +129,7 @@ public class SpotifyContacts {
         return REQUEST_CODE;
     }
 
-    public String getREDIRECT_URI() {
+    public static String getREDIRECT_URI() {
         return REDIRECT_URI;
     }
 
@@ -138,19 +151,77 @@ public class SpotifyContacts {
         return selectedGenres;
     }
 
-    // ------- appRemote functions ------------
-
-    public void nextSong(){
-        mSpotifyAppRemote.getPlayerApi().skipNext();
+    public void add_artist_seed(String uri){
+        String[] splitUri = uri.split(":");
+        seed_artist.add(splitUri[splitUri.length-1]);
+        if(seed_artist.size() > 5){
+            seed_artist.removeFirst();
+        }
     }
 
-    public void connectToDevice(final Context context){
-        spotifyApi = newApi();
+    public static String get_artist_seed(){
+        String s = new String();
+        int index = randomInt%seed_artist.size();
+        randomInt++;
+//        for (int i=0 ; i+1 < seed_artist.size(); i++ ){
+//            s += seed_artist.get(i)+",";
+//        }
+        s += seed_artist.get(index);
+        Log.e("seed_artist", s);
+        return s;
+        }
+
+    public void add_track_seed(String uri){
+            String[] splitUri = uri.split(":");
+            seed_track.add(splitUri[splitUri.length-1]);
+            if(seed_track.size() > 5){
+                seed_track.removeFirst();
+            }
+    }
+
+    public static String get_track_seed(){
+        String s = new String();
+        int index = randomInt%seed_artist.size();
+        randomInt++;
+//        for (int i=0 ; i+1 < seed_track.size(); i++ ){
+//            s += seed_track.get(i)+",";
+//        }
+        s += seed_track.get(index);
+        Log.e("seed_track", s);
+            return s;
+
+    }
+
+            // ------- appRemote functions ------------
+
+    public void nextSong(Context context){
+        if (!mSpotifyAppRemote.isConnected()){
+            concectToReomteApp(context);
+        }else{
+        mSpotifyAppRemote.getPlayerApi().skipNext();}
+        Log.i("Next", "song");
+    }
+
+    public static void pausePlay(Context context){
+        if (!mSpotifyAppRemote.isConnected()){
+            concectToReomteApp(context);
+        }else{
+        if(playpause % 2 == 1){
+            Log.i("pausePlay", "play");
+            mSpotifyAppRemote.getPlayerApi().resume();
+        }else{
+            Log.i("pausePlay", "pause");
+            mSpotifyAppRemote.getPlayerApi().pause();
+        }
+        playpause++;}
+    }
+
+    private static void concectToReomteApp(final Context context){
         ConnectionParams connectionParams =
-            new ConnectionParams.Builder(getCLIENT_ID())
-                    .setRedirectUri(getREDIRECT_URI())
-                    .showAuthView(true)
-                    .build();
+                new ConnectionParams.Builder(getCLIENT_ID())
+                        .setRedirectUri(getREDIRECT_URI())
+                        .showAuthView(true)
+                        .build();
 
         SpotifyAppRemote.CONNECTOR.connect(context, connectionParams,
                 new Connector.ConnectionListener() {
@@ -168,6 +239,11 @@ public class SpotifyContacts {
                         // Something went wrong when attempting to connect! Handle errors here
                     }
                 });
+    }
+
+    public void connectToDevice(final Context context){
+        spotifyApi = newApi();
+        concectToReomteApp(context);
     }
 
     public void addSongs(String uri){
@@ -360,7 +436,15 @@ public class SpotifyContacts {
                     spotifyService.addTracksToPlaylist(ID, playlist.id, body, body, new Callback<Pager<PlaylistTrack>>() {
                         @Override
                         public void success(Pager<PlaylistTrack> playlistTrackPager, Response response) {
-                            Log.e("addTracksToPlaylist", playlistTrackPager.items.get(0).track.id);
+                            //Log.e("addTracksToPlaylist", playlistTrackPager.items.get(0).track.id);
+                            mSpotifyAppRemote.getPlayerApi().queue(uris.get(0).uri);
+                            if(firstSong){
+                                mSpotifyAppRemote.getPlayerApi().play(playlist.uri);
+                                pausePlay(PartyActivity.context);
+                                firstSong = false;
+                            }
+
+
                         }
                         @Override
                         public void failure(RetrofitError error) {
@@ -383,10 +467,10 @@ public class SpotifyContacts {
                 Recommendations recommendations = new Recommendations();
                 try {
                     Map<String,Object> body = new HashMap<>();
-                    body.put("limit", 5);
-                    body.put("seed_artists", "4NHQUGzhtTLFvgF5SZesLK");
+                    body.put("limit", limit);
+                    body.put("seed_artists", get_artist_seed());
                     body.put("seed_genres", selectedGenresString(false));
-                    body.put("seed_tracks", "0c6xIDDpzE81m2q797ordA");
+                    body.put("seed_tracks", get_track_seed());
                     recommendations = spotifyService.getRecommendations(body);
                 } catch (Exception e) {
                     Log.e(TAG, "Error recomendation : " + e.getMessage());
@@ -396,9 +480,12 @@ public class SpotifyContacts {
             @Override
             protected void onPostExecute(Recommendations rec) {
                 recomendedTrackes = rec.tracks;
-                Log.e("got", rec.tracks.size() + "recomendations");
-                for(int i=0; i < rec.tracks.size(); i++){
-                    Log.e("track name:", rec.tracks.get(i).name);
+                PartyActivity.itemsClicked = 0;
+                if(rec.tracks != null) {
+                    Log.e("got", rec.tracks.size() + "recomendations");
+                    for (int i = 0; i < rec.tracks.size(); i++) {
+                        Log.e("track name:", rec.tracks.get(i).name);
+                    }
                 }
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);

@@ -114,4 +114,6 @@
     <string name="like">Like</string>
     <string name="diss">Diss</string>
     <string name="genre_image">genre image</string>
+    <string name="play_pause">PLAY/PAUSE</string>
+    <string name="refresh">refresh</string>
 </resources>

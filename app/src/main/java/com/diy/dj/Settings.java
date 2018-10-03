@@ -35,8 +35,7 @@ public class Settings extends AppCompatActivity {
     }
 
     public void pushParty(View view){
-        spotifyContacts.getRecommendations();
-        //PartyActivity.start(this, -1 , -1, spotifyContacts);
+        PartyActivity.start(this, -1 , -1, spotifyContacts);
     }
 
     @Override

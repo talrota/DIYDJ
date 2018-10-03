@@ -34,7 +34,7 @@
         <ListView
             android:id="@+id/recomendedSongList"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:layout_weight="5"
             tools:layout_editor_absoluteX="0dp" />
     </LinearLayout>
@@ -58,27 +58,31 @@
             android:text="Rec" />
 
         <Button
-            android:id="@+id/likeButton"
+            android:id="@+id/refreshButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:onClick="refreshView"
-            android:text="@string/like" />
+            android:text="@string/refresh" />
 
-        <Button
-            android:id="@+id/nextButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+
+        <ImageButton
+            android:id="@+id/play_pause"
+            android:layout_width="58dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:onClick="pausePlay"
+            android:text="@string/play_pause"
+            app:srcCompat="@android:drawable/ic_media_play" />
+
+        <ImageButton
+            android:id="@+id/next"
+            android:layout_width="58dp"
+            android:layout_height="match_parent"
             android:layout_weight="1"
             android:onClick="nextSong"
-            android:text="@string/next" />
-
-        <Button
-            android:id="@+id/dissButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/diss" />
+            android:text="@string/next"
+            app:srcCompat="@android:drawable/ic_media_next" />
     </LinearLayout>
 
 

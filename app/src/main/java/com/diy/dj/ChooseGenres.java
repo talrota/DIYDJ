@@ -140,14 +140,14 @@ public class ChooseGenres extends AppCompatActivity {
             mainViewHolder.name.setText(getItem(position).name);
             Image image = getItem(position).icons.get(0);
             final ViewHolder finalMainViewHolder = mainViewHolder;
-            spotifyContacts.getImage(image.url).setResultCallback(new CallResult.ResultCallback<Bitmap>() {
-                @Override
-                public void onResult(Bitmap bitmap) {
-                    Log.e("got here", "oh no");
-
-                    finalMainViewHolder.thumbnail.setImageBitmap(bitmap);
-                }
-            });
+//            spotifyContacts.getImage(image.url).setResultCallback(new CallResult.ResultCallback<Bitmap>() {
+//                @Override
+//                public void onResult(Bitmap bitmap) {
+//                    Log.e("got here", "oh no");
+//
+//                    finalMainViewHolder.thumbnail.setImageBitmap(bitmap);
+//                }
+//            });
             return convertView;
         }
     }
