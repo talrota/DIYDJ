@@ -1,58 +1,59 @@
 <?xml version="1.0" encoding="utf-8"?>
-    <LinearLayout
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        xmlns:tools="http://schemas.android.com/tools"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_weight="1"
+    android:gravity="top"
+    android:background="@color/colorBackground"
+    android:orientation="horizontal"
+    android:layout_marginBottom="10dp">
+
+    <Button
+        android:id="@+id/outButton"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
         android:layout_weight="1"
-        android:orientation="horizontal"
-        android:gravity="top">   <!--tools:layout_editor_absoluteX="0dp"-->
-    <!--tools:layout_editor_absoluteY="49dp"-->
+        android:background="@color/spotifyRed"
+        android:baselineAligned="false"
+        android:text="Out"
+        android:textColor="@color/spotifyBlack" />
 
-        <Button
-            android:id="@+id/outButton"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/spotifyRed"
-            android:baselineAligned="false"
-            android:text="Out"
-            android:textColor="@color/spotifyBlack" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="4"
+        android:orientation="vertical">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/trackname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="4"
-            android:orientation="vertical">
+            android:textStyle="bold"
+            android:gravity="center_vertical|center_horizontal"
+            android:textColor="@color/spotifyWhite" />
 
-            <TextView
-                android:id="@+id/trackname"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="4"
-                android:gravity="center_vertical|center_horizontal"
-                android:textColor="@color/spotifyWhite"
-                />
-
-            <TextView
-                android:id="@+id/artist"
-                android:layout_width="match_parent"
-                android:layout_height="0dp"
-                android:layout_weight="3"
-                android:layout_gravity="center_vertical|center_horizontal"
-                android:baselineAligned="false"
-                android:gravity="top|center_horizontal"
-                android:textColor="@color/spotifyWhite" />
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/inButton"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="@color/spotifyGreen"
-            android:text="In"
+        <TextView
+            android:id="@+id/artist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal"
+            android:layout_weight="2"
+            android:baselineAligned="false"
+            android:gravity="top|center_horizontal"
+            android:paddingBottom="2dp"
             android:textColor="@color/spotifyWhite" />
     </LinearLayout>
+
+    <Button
+        android:id="@+id/inButton"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:background="@color/spotifyGreen"
+        android:text="In"
+        android:textColor="@color/spotifyWhite" />
+</LinearLayout>
 

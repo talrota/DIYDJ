@@ -19,6 +19,7 @@
         app:layout_constraintHeight_default="wrap"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:titleTextColor="@color/spotifyWhite"
         tools:layout_constraintWidth_default="spread" />
 
     <LinearLayout
@@ -26,6 +27,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
+        android:background="@color/spotifyBlack"
         app:layout_constrainedHeight="false"
         app:layout_constraintBottom_toTopOf="@id/partyButtons"
         app:layout_constraintHeight_min="wrap"
@@ -53,17 +55,10 @@
             android:id="@+id/GetRecommendation"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:onClick="getRecommendation"
-            android:text="Rec" />
-
-        <Button
-            android:id="@+id/refreshButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
+            android:layout_weight="2"
+            android:background="@color/spotifyRed"
             android:onClick="refreshView"
-            android:text="@string/refresh" />
+            android:text="All Out" />
 
 
         <ImageButton

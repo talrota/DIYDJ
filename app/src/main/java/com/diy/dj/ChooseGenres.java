@@ -47,11 +47,15 @@ public class ChooseGenres extends AppCompatActivity {
     private static SpotifyContacts spotifyContacts;
     private Button button;
     private Context context;
+    private static int Max;
+    private static int Min;
 
     public static void start(Context context, SpotifyContacts contacts){
         spotifyContacts = contacts;
         Intent intent = new Intent(context, ChooseGenres.class);
         context.startActivity(intent);
+        Max = 4;
+        Min = 2;
     }
 
     public  void openSettings(View view){
@@ -63,6 +67,7 @@ public class ChooseGenres extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choosegenres);
         button = findViewById(R.id.chooseGenresbutton);
+        button.setText("Choose " + Min + " to " + Max+ " Genres, Got:" + spotifyContacts.numOfSelectedGenres());
         genresData = spotifyContacts.getSpotifyGenres();
         context = this;
         final ListView listview = (ListView) findViewById(R.id.genreslistview);
@@ -70,6 +75,7 @@ public class ChooseGenres extends AppCompatActivity {
         listview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                int num = spotifyContacts.numOfSelectedGenres();
                 if (spotifyContacts.getSelectedGenres().contains(genresData.get(position))){
                     spotifyContacts.removeGenre(genresData.get(position));
                     Toast.makeText(context, "unselected " + genresData.get(position).name, Toast.LENGTH_SHORT).show();
@@ -81,7 +87,7 @@ public class ChooseGenres extends AppCompatActivity {
                 int sum = parent.getChildCount();
                 for (int i=0; i < sum; i++){
                     View v = parent.getChildAt(i);
-                    if(spotifyContacts.selectedGenresString(false).contains(((TextView)v.findViewById(R.id.genre_name)).getText())){
+                    if(spotifyContacts.selectedGenresString(true).contains(((TextView)v.findViewById(R.id.genre_name)).getText())){
                         v.setBackgroundColor(getResources().getColor(R.color.spotifYellow));
                         TextView t = v.findViewById(R.id.genre_name);
                         t.setTextColor(getResources().getColor(R.color.spotifyBlack));
@@ -90,11 +96,15 @@ public class ChooseGenres extends AppCompatActivity {
                         TextView t = v.findViewById(R.id.genre_name);
                         t.setTextColor(getResources().getColor(R.color.spotifYellow));
                     }
+
                 }
-                if(spotifyContacts.numOfSelectedGenres() >= 3){
+                num = spotifyContacts.numOfSelectedGenres();
+                if(num >= Min &  num < Max){
                     button.setBackgroundColor(getResources().getColor(R.color.spotifyGreen));
+                    button.setText("Create Playlist");
                 }else{
                     button.setBackgroundColor(getResources().getColor(R.color.spotifyRed));
+                    button.setText("Choose " + Min + " to " + Max+ " Genres, Got:" + num);
                 }
             }
         });
@@ -102,15 +112,15 @@ public class ChooseGenres extends AppCompatActivity {
 
     public void button(View view){
         int num = spotifyContacts.numOfSelectedGenres();
-        if (spotifyContacts.finishedConnection & num >= 2 & num <= 5){
+        if (spotifyContacts.finishedConnection & num >= 2 & num <= 3){
             Settings.start(this, spotifyContacts);
             spotifyContacts.newPlaylist();
-        }if( num >= 2){
-            Toast.makeText(this, "select at least 2 genres", Toast.LENGTH_SHORT).show();
-        }if( num > 5 ){
-            Toast.makeText(this, "select up to 5 genres", Toast.LENGTH_SHORT).show();
+        }if( num >= Min){
+            Toast.makeText(this, "select at least " + Min + " genres", Toast.LENGTH_SHORT).show();
+        }if( num > Max ){
+            Toast.makeText(this, "select up to "+Max+" genres", Toast.LENGTH_SHORT).show();
         }if(!spotifyContacts.finishedConnection){
-            Toast.makeText(this, "still connecting to Spotify", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "still connecting to your Spotify wait a few seconds", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -132,14 +142,24 @@ public class ChooseGenres extends AppCompatActivity {
                 LayoutInflater inflater = LayoutInflater.from(getContext());
                 convertView = inflater.inflate(layout, parent, false);
                 ViewHolder viewHolder = new ViewHolder();
-                viewHolder.thumbnail = (ImageView) convertView.findViewById(R.id.genre_image);
+               // viewHolder.thumbnail = (ImageView) convertView.findViewById(R.id.genre_image);
                 viewHolder.name = (TextView) convertView.findViewById(R.id.genre_name);
                 convertView.setTag(viewHolder);
             }
             mainViewHolder = (ViewHolder) convertView.getTag();
             mainViewHolder.name.setText(getItem(position).name);
             Image image = getItem(position).icons.get(0);
-            final ViewHolder finalMainViewHolder = mainViewHolder;
+
+            if(spotifyContacts.selectedGenresString(true).contains(mainViewHolder.name.getText())){
+                convertView.setBackgroundColor(getResources().getColor(R.color.spotifYellow));
+                TextView t = convertView.findViewById(R.id.genre_name);
+                t.setTextColor(getResources().getColor(R.color.spotifyBlack));
+            }else{
+                convertView.setBackgroundColor(getResources().getColor(R.color.spotifyBlack));
+                TextView t = convertView.findViewById(R.id.genre_name);
+                t.setTextColor(getResources().getColor(R.color.spotifYellow));
+            }
+
 //            spotifyContacts.getImage(image.url).setResultCallback(new CallResult.ResultCallback<Bitmap>() {
 //                @Override
 //                public void onResult(Bitmap bitmap) {
@@ -153,12 +173,12 @@ public class ChooseGenres extends AppCompatActivity {
     }
 
     public class ViewHolder{
-        ImageView thumbnail;
+      //  ImageView thumbnail;
         TextView name;
         ViewHolder(){}
 
         ViewHolder(View view){
-            thumbnail = (ImageView) view.findViewById(R.id.genre_image);
+          //  thumbnail = (ImageView) view.findViewById(R.id.genre_image);
             name = (TextView) view.findViewById(R.id.genre_name);
         }
     }

@@ -265,7 +265,11 @@ public class SpotifyContacts {
         int size = selectedGenres.size();
         for(int i=0 ; i< selectedGenres.size(); i++){
             if (i+1 == size){
-                s = s + selectedGenres.get(i).name + " ";
+                if(withAnd){
+                    s = s + selectedGenres.get(i).name + " ";
+                }else{
+                    s = s + selectedGenres.get(i).name + ", Party ";
+                }
             }
             if (i+2 == size){
                     if(withAnd){

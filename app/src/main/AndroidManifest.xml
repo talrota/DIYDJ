@@ -10,25 +10,19 @@
 
     <application
         android:fullBackupContent="@xml/backup_descriptor"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/ic_launcher_round"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:versionName="alpha"
         android:theme="@style/AppTheme.NoActionBar">
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
                 <category android:name="android.intent.category.LAUNCHER" />
-
                 <action android:name="android.intent.action.VIEW" />
-
                 <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
 
-                <data
-                    android:host="callback"
-                    android:scheme="com.diy.dj" />
             </intent-filter>
         </activity>
         <activity
@@ -37,15 +31,27 @@
         <activity android:name=".PartyActivity"
                     android:theme="@style/AppTheme.NoActionBar"/>
         <activity android:name=".Settings" />
-        <activity
-            android:name="com.spotify.sdk.android.authentication.LoginActivity"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
         <activity android:name=".JoinActivity" />
         <activity android:name=".ErrorActivity" />
-        <activity android:name=".LoginActivity" />
         <activity
             android:name=".PreLoginActivity"
             android:label="@string/title_activity_pre_login" />
+        <activity android:name=".LoginActivity" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:host="callback"
+                    android:scheme="com.diy.dj" />
+
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.spotify.sdk.android.authentication.LoginActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
     </application>
 
 </manifest>

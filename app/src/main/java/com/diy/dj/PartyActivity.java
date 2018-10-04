@@ -67,15 +67,16 @@ public class PartyActivity extends AppCompatActivity {
         itemsClicked = 0;
         setContentView(R.layout.activity_party);
         context = this;
-
         Toolbar toolbar = findViewById(R.id.menuToolbar);
         setSupportActionBar(toolbar);
-        if (!SpotifyContacts.recomendedTrackes.isEmpty()) {
-            recomendations = SpotifyContacts.recomendedTrackes;
-            ListView listview = (ListView) findViewById(R.id.recomendedSongList);
-            listview.setAdapter(new PartyActivity.mysongListadaptor(context, R.layout.song_item_layout, SpotifyContacts.recomendedTrackes));
-        } else {
-            recomendations = new ArrayList<Track>();
+        if(SpotifyContacts.recomendedTrackes != null) {
+            if (!SpotifyContacts.recomendedTrackes.isEmpty()) {
+                recomendations = SpotifyContacts.recomendedTrackes;
+                ListView listview = (ListView) findViewById(R.id.recomendedSongList);
+                listview.setAdapter(new PartyActivity.mysongListadaptor(context, R.layout.song_item_layout, SpotifyContacts.recomendedTrackes));
+            } else {
+                recomendations = new ArrayList<Track>();
+            }
         }
 
     }

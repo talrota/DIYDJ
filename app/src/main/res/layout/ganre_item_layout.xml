@@ -5,28 +5,38 @@
     android:id="@+id/linearLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/spotifyBlack"
     android:descendantFocusability="blocksDescendants">
 
-    <ImageView
-        android:id="@+id/genre_image"
-        android:layout_width="65dp"
-        android:layout_height="65dp"
-        android:contentDescription="@string/genre_image"
-        android:foregroundGravity="left"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/ic_sync_black_24dp" />
+    <!--<ImageView-->
+    <!--android:id="@+id/genre_image"-->
+    <!--android:layout_width="65dp"-->
+    <!--android:layout_height="65dp"-->
+    <!--android:contentDescription="@string/genre_image"-->
+    <!--android:foregroundGravity="left"-->
+    <!--app:layout_constraintStart_toStartOf="parent"-->
+    <!--app:layout_constraintTop_toTopOf="parent"-->
+    <!--app:srcCompat="@drawable/ic_sync_black_24dp" />-->
 
     <TextView
         android:id="@+id/genre_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textColor="@color/spotifYellow"
+        android:layout_marginBottom="3dp"
+        android:layout_marginTop="3dp"
         android:textAlignment="center"
+        android:textColor="@color/spotifYellow"
         android:textSize="65dp"
-        app:layout_constrainedHeight="@+id/genre_image"
-        app:layout_constraintBottom_toBottomOf="@+id/genre_image"
-        app:layout_constraintStart_toEndOf="@+id/genre_image"/>
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+    <!--app:layout_constrainedHeight="@+id/genre_image"-->
+    <!--app:layout_constraintBottom_toBottomOf="@+id/genre_image"-->
+    <!--app:layout_constraintEnd_toEndOf="parent"-->
+    <!--app:layout_constraintHorizontal_bias="0.5"-->
+    <!--app:layout_constraintStart_toEndOf="@+id/genre_image" />-->
 
 </android.support.constraint.ConstraintLayout>
 

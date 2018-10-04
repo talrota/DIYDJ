@@ -13,43 +13,25 @@
         android:id="@+id/imageView3"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:scaleType="fitCenter"
         app:srcCompat="@drawable/choosegenreyellow" />
 
-    <LinearLayout
+    <Button
+        android:id="@+id/chooseGenresbutton"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:orientation="horizontal"
-        android:layout_weight="1">
-
-        <TextView
-            android:id="@+id/textView2"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:textAlignment="center"
-            android:text="@string/choose_genres"
-            android:textSize="30dp"
-            android:textColor="@color/spotifyWhite"/>
-
-        <Button
-            android:id="@+id/chooseGenresbutton"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Create the Playlist"
-            android:background="@color/spotifyRed"
-            android:onClick="button"
-            />
-
-    </LinearLayout>
+        android:layout_weight="1"
+        android:autoText="true"
+        android:background="@color/spotifyRed"
+        android:onClick="button"
+        android:text="Create the Playlist" />
 
     <ListView
         android:id="@+id/genreslistview"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3" />
+        android:layout_weight="5" />
 
 
 </LinearLayout>

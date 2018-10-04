@@ -32,33 +32,48 @@
             android:orientation="vertical">
 
 
-                <EditText
-                    android:id="@+id/email"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_email"
-                    android:inputType="textEmailAddress"
-                    android:maxLines="1"
-                    android:singleLine="true" />
+            <EditText
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="10dp"
+                android:layout_marginTop="10dp"
+                android:background="@color/spotifyBlack"
+                android:hint="@string/prompt_email"
+                android:inputType="textEmailAddress"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="@color/spotifyWhite"
+                android:textColorHint="@color/spotifyWhite"
+                android:textSize="25dp" />
 
 
             <EditText
-                    android:id="@+id/getpassword"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/prompt_password"
-                    android:inputType="textPassword"
-                    android:maxLines="1"
-                    android:singleLine="true" />
+                android:id="@+id/getpassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="8dp"
+                android:background="@color/spotifyBlack"
+                android:hint="@string/prompt_password"
+                android:inputType="textPassword"
+                android:maxLines="1"
+                android:singleLine="true"
+                android:textColor="@color/spotifyWhite"
+                android:textColorHint="@color/spotifyWhite"
+                android:textSize="25dp"/>
 
             <EditText
                 android:id="@+id/username"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:background="@color/spotifyBlack"
                 android:hint="@string/userNameHint"
                 android:inputType="textPersonName"
                 android:maxLines="1"
-                android:singleLine="true" />
+                android:singleLine="true"
+                android:textColor="@color/spotifyWhite"
+                android:textColorHint="@color/spotifyWhite"
+                android:textSize="25dp"/>
 
 
             <Button
@@ -66,20 +81,28 @@
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_marginLeft="16dp"
+                android:layout_marginRight="16dp"
+                android:layout_marginTop="30dp"
+                android:background="@color/spotifyGreen"
+                android:onClick="signIn"
                 android:text="@string/action_sign_in"
-                android:textStyle="bold"
-                android:onClick="signIn"/>
+                android:textColor="@color/spotifyBlack"
+                android:textSize="20dp"
+                android:textStyle="bold" />
 
             <Button
                 android:id="@+id/email_sign_up_button"
                 style="?android:textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
+                android:layout_margin="16dp"
+                android:background="@color/spotifYellow"
+                android:onClick="signUp"
                 android:text="@string/action_sign_up"
-                android:textStyle="bold"
-                android:onClick="signUp"/>
+                android:textColor="@color/spotifyBlack"
+                android:textSize="20dp"
+                android:textStyle="bold" />
 
 
         </LinearLayout>
