@@ -85,6 +85,7 @@ public class SpotifyContacts {
         spotifyApi = null;
         spotifyGenres = null;
         playlist = null;
+        mSpotifyAppRemote = null;
         categoryArrayList = new ArrayList<Category>();
         selectedGenres = new ArrayList<Category>();
         unWantedTrackes = new ArrayList<Track>();
@@ -151,7 +152,7 @@ public class SpotifyContacts {
         return selectedGenres;
     }
 
-    public void add_artist_seed(String uri){
+    public void add_artist_seed(String uri) {
         String[] splitUri = uri.split(":");
         seed_artist.add(splitUri[splitUri.length-1]);
         if(seed_artist.size() > 5){
@@ -159,7 +160,8 @@ public class SpotifyContacts {
         }
     }
 
-    public static String get_artist_seed(){
+    public static String get_artist_seed()
+    {
         String s = new String();
         int index = randomInt%seed_artist.size();
         randomInt++;
@@ -195,14 +197,18 @@ public class SpotifyContacts {
             // ------- appRemote functions ------------
 
     public void nextSong(Context context){
-        if (!mSpotifyAppRemote.isConnected()){
-            concectToReomteApp(context);
-        }else{
-        mSpotifyAppRemote.getPlayerApi().skipNext();}
-        Log.i("Next", "song");
+        if (mSpotifyAppRemote != null) {
+            if (!mSpotifyAppRemote.isConnected()) {
+                concectToReomteApp(context);
+            } else {
+                mSpotifyAppRemote.getPlayerApi().skipNext();
+            }
+            Log.i("Next", "song");
+        }
     }
 
     public static void pausePlay(Context context){
+        if (mSpotifyAppRemote != null){
         if (!mSpotifyAppRemote.isConnected()){
             concectToReomteApp(context);
         }else{
@@ -214,6 +220,30 @@ public class SpotifyContacts {
             mSpotifyAppRemote.getPlayerApi().pause();
         }
         playpause++;}
+        }
+    }
+
+    public static void StartPlaying(String uri){
+        if (mSpotifyAppRemote != null){
+            if (!mSpotifyAppRemote.isConnected()) {
+                concectToReomteApp(PartyActivity.context);
+                mSpotifyAppRemote.getPlayerApi().play(uri);
+            } else {
+                mSpotifyAppRemote.getPlayerApi().play(uri);
+
+            }
+        }
+    }
+
+    public static void queue(Context context, String uri) {
+        if (mSpotifyAppRemote != null){
+            if (!mSpotifyAppRemote.isConnected()) {
+                concectToReomteApp(context);
+                mSpotifyAppRemote.getPlayerApi().queue(uri);
+            } else {
+                mSpotifyAppRemote.getPlayerApi().queue(uri);
+        }
+        }
     }
 
     private static void concectToReomteApp(final Context context){
@@ -244,10 +274,6 @@ public class SpotifyContacts {
     public void connectToDevice(final Context context){
         spotifyApi = newApi();
         concectToReomteApp(context);
-    }
-
-    public void addSongs(String uri){
-         mSpotifyAppRemote.getPlayerApi().queue(uri);
     }
 
     public void selectGenre(Category category){
@@ -364,11 +390,6 @@ public class SpotifyContacts {
         return null;
     }
 
-    public CallResult<Bitmap> getImage(String stringUri){
-        ImageUri uri = new ImageUri(stringUri);
-        return mSpotifyAppRemote.getImagesApi().getImage(uri);
-
-    }
 
     public static Playlist newPlaylist(){
         new AsyncTask<Void, Void, Playlist>() {
@@ -396,7 +417,6 @@ public class SpotifyContacts {
             @Override
             protected void onPostExecute(Playlist newPlaylist) {
                 playlist = newPlaylist;
-                mSpotifyAppRemote.getPlayerApi().play(playlist.uri);
                 getRecommendations();
             }
         }.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR);
@@ -435,17 +455,18 @@ public class SpotifyContacts {
                     Map<String,Object> body = new HashMap<>();
                     Map<String,Object> query = new HashMap<>();
                     body.put("uris", uris.get(0).uri);
-//                    body.put("position", 0);
                     Log.e("body:", body.toString());
                     spotifyService.addTracksToPlaylist(ID, playlist.id, body, body, new Callback<Pager<PlaylistTrack>>() {
                         @Override
                         public void success(Pager<PlaylistTrack> playlistTrackPager, Response response) {
                             //Log.e("addTracksToPlaylist", playlistTrackPager.items.get(0).track.id);
-                            mSpotifyAppRemote.getPlayerApi().queue(uris.get(0).uri);
                             if(firstSong){
-                                mSpotifyAppRemote.getPlayerApi().play(playlist.uri);
-                                pausePlay(PartyActivity.context);
                                 firstSong = false;
+                                StartPlaying(playlist.uri);
+                                pausePlay(PartyActivity.context);
+                            }else{
+                                queue(PartyActivity.context, uris.get(0).uri);
+
                             }
 
 

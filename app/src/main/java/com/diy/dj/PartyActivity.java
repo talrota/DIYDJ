@@ -52,7 +52,6 @@ public class PartyActivity extends AppCompatActivity {
 
     public static void start(Context context, int hour, int minute, SpotifyContacts contacts) {
         Intent intent = new Intent(context, PartyActivity.class);
-        PartyActivity.hour = hour;
         spotifyContacts = contacts;
         spotifyContacts.setHour(hour);
         spotifyContacts.setMinute(minute);
